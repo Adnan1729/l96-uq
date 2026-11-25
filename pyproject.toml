@@ -1,0 +1,54 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "l96uq"
+version = "0.1.0"
+description = "Systematic uncertainty quantification for Lorenz-96 subgrid emulators"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Adnan Mahmud", email = "M.A.Mahmud@sms.ed.ac.uk" }]
+
+dependencies = [
+    "numpy>=1.26",
+    "scipy>=1.11",
+    "torch>=2.2",
+    "scikit-learn>=1.4",
+    "matplotlib>=3.8",
+    "pandas>=2.1",
+    "tqdm>=4.66",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=5.0",
+    "ruff>=0.6",
+    "properscoring>=0.1",   # independent CRPS, used only to cross-check ours
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/l96uq"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "NPY", "SIM"]
+# E741: we use single-letter names (h, c, b, F, J, K) deliberately — they are the
+# symbols in the Lorenz-96 equations and renaming them would hurt readability.
+ignore = ["E741"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["E501"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q --strict-markers"
+markers = [
+    "slow: needs a long truth trajectory (deselect with '-m \"not slow\"')",
+]
